@@ -14,12 +14,16 @@ public class Client {
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
             Scanner s = new Scanner(System.in);
-            String msg;
+
+            // Read welcome message from server (optional)
+            String serverMsg = in.readLine();
+            if (serverMsg != null) {
+                System.out.println("SERVER: " + serverMsg);
+            }
 
             while (true) {
-                msg = s.nextLine();       // read from keyboard
-                out.println(msg);         // send to server
-                System.out.println("SERVER: " + in.readLine()); // read server reply
+                String message = s.nextLine();  // read user input
+                out.println(message);           // send to server
             }
 
         } catch (Exception e) {
