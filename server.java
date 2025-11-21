@@ -1,10 +1,15 @@
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class server {
 
     private static final int PORT = 1234;
+    private static List<PrintWriter> clientWriters = new ArrayList<>();
     public static void main(String[] args) {
         // Making the SERVER
         try(ServerSocket serverSocket = new ServerSocket(PORT)){
@@ -15,7 +20,7 @@ public class server {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println(" New Client connected: "+clientSocket.getInetAddress().getHostAddress());
 
-                ClientHandler handler = new ClientHandler(clientSocket);
+                ClientHandler handler = new ClientHandler(clientSocket , clientWriters);
                 new Thread(handler).start();
             }
             
