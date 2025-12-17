@@ -10,8 +10,7 @@ public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private BufferedReader in;
     private PrintWriter out;
-
-    // 🔥 Shared list of writers (will be passed from server)
+    private String clientName;
     private List<PrintWriter> clientWriters;
 
     public ClientHandler(Socket socket, List<PrintWriter> writers) {
@@ -25,20 +24,20 @@ public class ClientHandler implements Runnable {
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-            // Add this client's writer to shared list
+            // First thing: receive name
+            clientName = in.readLine();
+
             synchronized (clientWriters) {
                 clientWriters.add(out);
             }
 
-            out.println("You are connected to the server!");
+            broadcast(clientName + " joined the chat!");
 
             String message;
 
             while ((message = in.readLine()) != null) {
-                System.out.println("Client says: " + message);
-
-                // Broadcast to everyone
-                broadcast("Client (" + clientSocket.getInetAddress().getHostAddress() + "): " + message);
+                System.out.println(clientName + ": " + message);
+                broadcast(clientName + ": " + message);
             }
 
         } catch (IOException e) {
@@ -48,14 +47,16 @@ public class ClientHandler implements Runnable {
                 synchronized (clientWriters) {
                     clientWriters.remove(out);
                 }
+
                 clientSocket.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            broadcast(clientName + " left the chat.");
         }
     }
 
-    // 🔥 BROADCAST METHOD 
     private void broadcast(String msg) {
         synchronized (clientWriters) {
             for (PrintWriter writer : clientWriters) {

@@ -8,22 +8,26 @@ public class Client {
     public static void main(String[] args) {
         try {
             Socket socket = new Socket("localhost", 1234);
-            System.out.println("Connected to server...");
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
             Scanner s = new Scanner(System.in);
 
-            // Read welcome message from server (optional)
+            System.out.println("Enter your name: ");   // <-- FIXED
+            String name = s.nextLine();
+
+            BufferedReader in = new BufferedReader(
+                new InputStreamReader(socket.getInputStream())
+            );
+
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+
+            out.println(name);
+
             String serverMsg = in.readLine();
-            if (serverMsg != null) {
-                System.out.println("SERVER: " + serverMsg);
-            }
+            System.out.println("SERVER: " + serverMsg);
 
             while (true) {
-                String message = s.nextLine();  // read user input
-                out.println(message);           // send to server
+                String message = s.nextLine();
+                out.println(message);
             }
 
         } catch (Exception e) {
