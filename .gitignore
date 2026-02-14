@@ -1,0 +1,12 @@
+# Ignore compiled Java class files
+*.class
+
+# Ignore log files
+*.log
+
+# Ignore VS Code workspace files
+.vscode/
+
+# Ignore IntelliJ files just in case
+.idea/
+out/
