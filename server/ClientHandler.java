@@ -3,6 +3,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class ClientHandler implements Runnable {
@@ -17,7 +19,11 @@ public class ClientHandler implements Runnable {
         this.clientSocket = socket;
         this.clientWriters = writers;
     }
-
+    private String getCurrentTime(){
+        LocalTime now = LocalTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        return now.format(formatter);
+    }
     @Override
     public void run() {
         try {
@@ -37,7 +43,7 @@ public class ClientHandler implements Runnable {
 
             while ((message = in.readLine()) != null) {
                 System.out.println(clientName + ": " + message);
-                broadcast(clientName + ": " + message);
+                broadcast("[" + getCurrentTime() + "] " + clientName + ": " + message);
             }
 
         } catch (IOException e) {
